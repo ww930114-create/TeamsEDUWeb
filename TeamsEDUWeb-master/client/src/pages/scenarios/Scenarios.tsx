@@ -89,7 +89,7 @@ export default function Scenarios() {
             Microsoft Teams 不只是聊天工具，它能因應不同產業和情境的需求，從企業溝通到教育培訓，從醫療協作到前線服務，全面提升團隊效率。
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/introduction">
+            <Link href="/practicalguide">
               <Button size="lg" className="px-10 font-semibold" style={{ background: '#F2C811', color: '#1a1a1a', border: 'none' }}>
                 從入門開始
                 <ArrowRight className="ml-2 w-4 h-4" />

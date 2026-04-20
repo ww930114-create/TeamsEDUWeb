@@ -5,20 +5,19 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
-import Introduction from "./pages/introduction/Introduction";
-import CoreConcepts from "./pages/concepts/CoreConcepts";
+import Practicalguide from "./pages/Practicalguide/Practicalguide";
 import ChatChannels from "./pages/concepts/ChatChannels";
 import Meetings from "./pages/concepts/Meetings";
 import Scenarios from "./pages/scenarios/Scenarios";
 import FAQ from "./pages/support/FAQ";
 import Layout from "./components/Layout";
+import './index.css';
 
 function Router() {
   return (
     <Switch>
       <Route path="/" component={Home} />
-      <Route path="/introduction" component={Introduction} />
-      <Route path="/concepts/core" component={CoreConcepts} />
+      <Route path="/practicalguide" component={Practicalguide} />
       <Route path="/concepts/chat-channels" component={ChatChannels} />
       <Route path="/concepts/meetings" component={Meetings} />
       <Route path="/scenarios" component={Scenarios} />
