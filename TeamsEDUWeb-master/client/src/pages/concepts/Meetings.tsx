@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -14,6 +14,13 @@ const PRIMARY_LIGHT = '#E8E6F5';
 const PRIMARY_DARK = '#4B49A1';
 const PRIMARY_DEEP = '#2D2B5A';
 const ACCENT = '#7C3AED';
+
+const getDarkModeGradient = (isDark: boolean) => {
+  if (isDark) {
+    return 'linear-gradient(135deg, #3a3855 0%, #5a5995 60%, #7b7cb4 100%)';
+  }
+  return `linear-gradient(135deg, ${PRIMARY_DEEP}, ${PRIMARY_DARK}, ${PRIMARY})`;
+};
 
 type GuideTipType = 'info' | 'warning' | 'success';
 
@@ -39,9 +46,9 @@ interface MeetingGuide {
 }
 
 const GUIDE_TIP_STYLE: Record<GuideTipType, { bg: string; border: string; text: string; icon: string }> = {
-  info: { bg: '#EFF6FF', border: '#BFDBFE', text: '#1D4ED8', icon: 'ℹ' },
-  warning: { bg: '#FFFBEB', border: '#FDE68A', text: '#B45309', icon: '⚠' },
-  success: { bg: '#ECFDF5', border: '#A7F3D0', text: '#065F46', icon: '✓' },
+  info: { bg: 'var(--tip-info-bg)', border: 'var(--tip-info-border)', text: 'var(--tip-info-text)', icon: 'ℹ' },
+  warning: { bg: 'var(--tip-warning-bg)', border: 'var(--tip-warning-border)', text: 'var(--tip-warning-text)', icon: '⚠' },
+  success: { bg: 'var(--tip-success-bg)', border: 'var(--tip-success-border)', text: 'var(--tip-success-text)', icon: '✓' },
 };
 
 // 按照「身分」嚴格分類的動態資料
@@ -259,12 +266,24 @@ function MeetingGuideCard({ guide }: { guide: MeetingGuide }) {
 
 export default function Meetings() {
   const [activeRole, setActiveRole] = useState<string>('organizer');
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    };
+    checkDarkMode();
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
   const currentRoleData = ROLES_GUIDE_DATA.find(r => r.id === activeRole) || ROLES_GUIDE_DATA[0];
 
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative py-20 overflow-hidden" style={{ background: `linear-gradient(135deg, ${PRIMARY_DEEP}, ${PRIMARY_DARK}, ${PRIMARY})` }}>
+      <section className="relative py-20 overflow-hidden" style={{ background: getDarkModeGradient(isDark) }}>
         <div className="container relative z-10 max-w-4xl text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium mb-6" style={{ background: `${PRIMARY_LIGHT}30`, color: '#E8E6F5' }}>
             <Video className="w-4 h-4" />
@@ -314,7 +333,7 @@ export default function Meetings() {
                <p className="text-foreground/80 mb-5 leading-relaxed text-lg">{currentRoleData.desc}</p>
                
                {currentRoleData.warning && (
-                 <div className="flex gap-4 p-5 rounded-xl items-start" style={{ backgroundColor: '#FFFBEB', border: '1px solid #FDE68A', color: '#B45309' }}>
+                 <div className="flex gap-4 p-5 rounded-xl items-start" style={{ backgroundColor: 'var(--tip-warning-bg)', border: '1px solid var(--tip-warning-border)', color: 'var(--tip-warning-text)' }}>
                    <div className="font-bold text-xl mt-0.5">⚠</div>
                    <div>
                      <p className="font-bold mb-1">絕對禁忌與限制</p>

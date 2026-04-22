@@ -7,6 +7,7 @@ import {
   Database, PieChart,
 } from 'lucide-react';
 import { MotionContainer, PageTransition, HoverScale } from '@/components/MotionContainer';
+import { useState, useEffect } from 'react';
 
 // ── 品牌色（Teams 紫） ────────────────────────────────────────────────────
 const T = {
@@ -16,6 +17,14 @@ const T = {
   purpleLight: '#ECEDF8',
   purpleMid:   '#9B9DD4',
   yellow:      '#F2C811',
+};
+
+// ── 深色模式梯度 ─────────────────────────────────────────────────────────
+const getDarkModeGradient = (isDark: boolean) => {
+  if (isDark) {
+    return 'linear-gradient(135deg, #3a3855 0%, #5a5995 60%, #7b7cb4 100%)';
+  }
+  return `linear-gradient(135deg, ${T.purpleDeep} 0%, ${T.purpleDark} 60%, ${T.purple} 100%)`;
 };
 
 // ── 噪點網格裝飾 ──────────────────────────────────────────────────────────
@@ -126,6 +135,18 @@ const PATHS = [
 ];
 
 export default function Home() {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    };
+    checkDarkMode();
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <PageTransition>
       <div className="min-h-screen bg-background text-foreground">
@@ -135,7 +156,7 @@ export default function Home() {
         ══════════════════════════════════════════════════════════════ */}
         <section
           className="relative overflow-hidden py-28"
-          style={{ background: `linear-gradient(135deg, ${T.purpleDeep} 0%, ${T.purpleDark} 60%, ${T.purple} 100%)` }}
+          style={{ background: getDarkModeGradient(isDark) }}
         >
           <div className="absolute inset-0" style={{ backgroundImage: GRID }} />
           {/* 左色線 */}
@@ -283,8 +304,8 @@ export default function Home() {
                   <div
                     className="p-8 h-full hover:bg-muted/40 transition-colors duration-200 flex flex-col"
                     style={{
-                      borderRight: idx % 2 === 0 ? '1px solid hsl(var(--border))' : 'none',
-                      borderBottom: idx < 4 ? '1px solid hsl(var(--border))' : 'none',
+                      borderRight: idx % 2 === 0 ? '1px solid var(--border)' : 'none',
+                      borderBottom: idx < 4 ? '1px solid var(--border)' : 'none',
                     }}
                   >
                     <div className="flex items-center gap-3 mb-4">
@@ -316,7 +337,7 @@ export default function Home() {
         <section className="py-24 bg-background border-b border-border">
           <div className="container max-w-5xl">
             <div className="rounded-2xl overflow-hidden border border-border"
-              style={{ background: `linear-gradient(135deg, ${T.purpleDeep}f0, ${T.purpleDark}f0)` }}>
+              style={{ background: getDarkModeGradient(isDark) }}>
               <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: GRID }} />
               <div className="relative z-10 p-10 md:p-14">
                 <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -443,7 +464,7 @@ export default function Home() {
                     <div
                       className="group flex items-center gap-6 p-7 transition-colors duration-200 hover:bg-muted/30 cursor-pointer"
                       style={{
-                        borderBottom: idx < PATHS.length - 1 ? '1px solid hsl(var(--border))' : 'none',
+                        borderBottom: idx < PATHS.length - 1 ? '1px solid var(--border)' : 'none',
                         borderLeft: '3px solid transparent',
                       }}
                       onMouseEnter={e => (e.currentTarget.style.borderLeftColor = T.purple)}
@@ -470,7 +491,7 @@ export default function Home() {
             CTA — 呼應 Hero 推廣語氣
         ══════════════════════════════════════════════════════════════ */}
         <section className="relative py-24 overflow-hidden"
-          style={{ background: `linear-gradient(135deg, ${T.purpleDeep} 0%, ${T.purpleDark} 50%, ${T.purple} 100%)` }}>
+          style={{ background: getDarkModeGradient(isDark) }}>
           <div className="absolute inset-0" style={{ backgroundImage: GRID }} />
           <div className="absolute left-0 top-0 w-1 h-full"
             style={{ background: `linear-gradient(to bottom, ${T.yellow}, transparent)` }} />

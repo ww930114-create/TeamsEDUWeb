@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,6 +23,13 @@ const T = {
 };
 
 const GRID = `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg stroke='%239B9DD4' stroke-width='0.3' opacity='0.25'%3E%3Cpath d='M0 0h60v60H0z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`;
+
+const getDarkModeGradient = (isDark: boolean) => {
+  if (isDark) {
+    return 'linear-gradient(135deg, #3a3855 0%, #5a5995 60%, #7b7cb4 100%)';
+  }
+  return `linear-gradient(135deg, ${T.purpleDeep} 0%, ${T.purpleDark} 60%, ${T.purple} 100%)`;
+};
 
 type TipType = 'info' | 'warning' | 'success';
 
@@ -300,9 +307,9 @@ const SPOTLIGHT_GUIDES = [
 ];
 
 const tipStyle: Record<TipType, { bg: string; border: string; text: string; icon: string }> = {
-  info:    { bg: '#EFF6FF', border: '#BFDBFE', text: '#1D4ED8', icon: 'ℹ' },
-  warning: { bg: '#FFFBEB', border: '#FDE68A', text: '#B45309', icon: '⚠' },
-  success: { bg: '#ECFDF5', border: '#A7F3D0', text: '#065F46', icon: '✓' },
+  info:    { bg: 'var(--tip-info-bg)', border: 'var(--tip-info-border)', text: 'var(--tip-info-text)', icon: 'ℹ' },
+  warning: { bg: 'var(--tip-warning-bg)', border: 'var(--tip-warning-border)', text: 'var(--tip-warning-text)', icon: '⚠' },
+  success: { bg: 'var(--tip-success-bg)', border: 'var(--tip-success-border)', text: 'var(--tip-success-text)', icon: '✓' },
 };
 
 function StepCard({ step, color }: { step: GuideStep; color: string }) {
@@ -398,12 +405,24 @@ function StepCard({ step, color }: { step: GuideStep; color: string }) {
 }
 
 export default function PracticalGuide() {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDark(document.documentElement.classList.contains('dark'));
+    };
+    checkDarkMode();
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <PageTransition>
       <div className="min-h-screen bg-background text-foreground pb-24">
         <section
           className="relative overflow-hidden py-24 mb-12"
-          style={{ background: `linear-gradient(135deg, ${T.purpleDeep} 0%, ${T.purpleDark} 60%, ${T.purple} 100%)` }}
+          style={{ background: getDarkModeGradient(isDark) }}
         >
           <div className="absolute inset-0" style={{ backgroundImage: GRID }} />
           <div className="absolute left-0 top-0 w-1 h-full" style={{ background: `linear-gradient(to bottom, ${T.yellow}, ${T.purple}, transparent)` }} />
